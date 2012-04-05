@@ -22,15 +22,13 @@ PHPによるベイジアンフィルタ。単純ベイズ分類器。
 
 * BayesClassifier/sql/bays_classifier_ddl.sqlでテーブルを作成する。
 
-* BayesClassifier/testディレクトリ配下に移動してコマンドラインから
+* 機械学習させるには、BayesClassifier/testディレクトリ配下に移動してコマンドラインから
 
     php bayes_classifier_train.php なんかテキスト カテゴリ文字列
 
-で機械学習する
+* カテゴリ推定させるには、BayesClassifier/testディレクトリ配下に移動してコマンドラインから
 
     php bayes_classifier_train.php なんかテキスト
-
-でカテゴリ推定する
 
 ##License
 Apache License 2.0
