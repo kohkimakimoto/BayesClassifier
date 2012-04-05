@@ -20,21 +20,17 @@ PHPによるベイジアンフィルタ。単純ベイズ分類器。
 
 * MySQLにbayes_classifierデータベースを作成する
 
-    # mysql -uroot 
-    > create database bayes_classifier;
-    
 * BayesClassifier/sql/bays_classifier_ddl.sqlでテーブルを作成する。
 
 * BayesClassifier/testディレクトリ配下に移動してコマンドラインから
 
-    # php bayes_classifier_train.php なんかテキスト カテゴリ文字列
+    php bayes_classifier_train.php なんかテキスト カテゴリ文字列
 
 で機械学習する
 
-    # php bayes_classifier_train.php なんかテキスト
+    php bayes_classifier_train.php なんかテキスト
 
 でカテゴリ推定する
-
 
 ##License
 Apache License 2.0
