@@ -1,0 +1,106 @@
+Mecab,php_mecabのインストール手順.
+
+CentOS6で検証。
+ソースは一度checkinstallでRPMにして
+パッケージ管理できるようにしてからインストールする。 
+
+
+checkinstall
+============
+依存パッケージのインストール
+  # yum install gcc make gettext rpm-build
+
+checkinstallのソースはgitからcloneするのでgitもインストールする
+  # yum install git
+
+checkinstallをインストール
+  # cd /var/tmp
+  # git clone http://checkinstall.izto.org/checkinstall.git
+  # cd checkinstall/
+  # make
+  # make install
+
+  64bit環境ではエラーとなるバグがあるので、以下で回避
+  # ln -s /usr/local/lib/installwatch.so /usr/local/lib64/installwatch.so
+
+  ※/usr/local/にインストールされる
+
+checkinstallをRPM化する
+  # cd /var/tmp/checkinstall
+  # checkinstall --install=no
+  
+  /root/rpmbuild has no SOURCES directory. Please write the path to the RPM source directory tree:
+  とメッセージがでるのでCtrl-Cで中断。以下のように/root/rpmbuild/SOURCESディレクトリを作ってもう一度トライ
+  
+  # mkdir -p /root/rpmbuild/SOURCES
+  # checkinstall --install=no
+  
+RPMで再インストール
+  # cd /root/rpmbuild/RPMS/i386
+  # rpm -ivh checkinstall-20120324-1.i386.rpm
+
+  /usr/local/にインストールされたcheckinstallがそのままパッケージ管理対象になる
+
+パッケージの管理情報などを確認。
+  # rpm -qi checkinstall
+  # rpm -ql checkinstall
+
+
+MeCab
+=====
+MeCabをダウンロードしてビルドする
+  # cd /var/tmp
+  # wget http://mecab.googlecode.com/files/mecab-0.993.tar.gz
+  # tar xvzf mecab-0.993.tar.gz
+  # cd mecab-0.993
+  # ./configure
+  # make
+
+  ※なおMeCabの最新は以下から確認
+  http://mecab.googlecode.com/svn/trunk/mecab/doc/index.html
+
+MeCabをcheckinstallでRPM化してインストール
+  # cd /var/tmp/mecab-0.993
+  # checkinstall --install=no
+  # rpm -ivh /root/rpmbuild/RPMS/i386/mecaitb-0.993-1.i386.rpm
+
+IPA辞書(ipadic)をダウンロードしてビルドする
+  # cd /var/tmp
+  # wget http://mecab.googlecode.com/files/mecab-ipadic-2.7.0-20070801.tar.gz
+  # tar xvzf mecab-ipadic-2.7.0-20070801.tar.gz
+  # cd mecab-ipadic-2.7.0-20070801
+  # ./configure --with-charset=utf-8
+  # make
+  
+IPA辞書(ipadic)をcheckinstallでRPM化してインストール
+  # cd /var/tmp/mecab-ipadic-2.7.0-20070801
+  # checkinstall --install=no
+  
+  Nameにバージョン番号などが入ってしまっているので以下のように修正
+  ----------------------
+  1 -  Summary: [ Package created with checkinstall 1.6.3 ]
+  2 -  Name:    [ mecab-ipadic ]
+  3 -  Version: [ 2.7.0 ]
+  4 -  Release: [ 20070801 ]
+  5 -  License: [ GPL ]
+  6 -  Group:   [ Applications/System ]
+  7 -  Architecture: [ i386 ]
+  8 -  Source location: [ mecab-ipadic-2.7.0-20070801 ]
+  9 -  Alternate source location: [  ]
+  10 - Requires: [  ]
+  11 - Provides: [ mecab-ipadic-2.7.0 ]
+  ----------------------
+  # rpm -ivh /root/rpmbuild/RPMS/i386/mecab-ipadic-2.7.0-20070801.i386.rpm
+
+
+php_mecab 
+=========
+pecl.opendogs.org をチャンネルに追加。
+  # pear channel-discover pecl.opendogs.org
+  # pear remote-list -c opendogs
+  # pear install opendogs/mecab-beta
+
+PHPの設定を行う
+  # echo "extension=mecab.so" > /etc/php.d/mecab.ini
+
+
